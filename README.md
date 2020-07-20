@@ -1,27 +1,29 @@
-# _shared_project
+Using NS Version 6.7.8, you may face problems in running application. To solve these,
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.1.0.
+1. In package.json remove @angular/http, since it is no longer available.
+2. In dev depedencies, change version of @angular/semnatic from 2.0.0 to 9.0.0
 
-## Development server
+3. Run npm i
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+4. Change in webpack.config.js. 
+  Find CopyWebpackPlugin settings.
+  Replace exsisting fonts and .jpg, .png settings with 
+    new CopyWebpackPlugin({
+              patterns: [
+                { from: 'assets/**', noErrorOnMissing: true, globOptions: { dot: false, ...copyIgnore } },
+                { from: 'fonts/**', noErrorOnMissing: true, globOptions: { dot: false, ...copyIgnore } },
+                { from: '**/*.jpg', noErrorOnMissing: true, globOptions: { dot: false, ...copyIgnore } },
+                { from: '**/*.png', noErrorOnMissing: true, globOptions: { dot: false, ...copyIgnore } },
+              ],
+            }),
+            
+5. Place these lines at above entryModule declaration. Remove appResourcesFullPath if twice.
+  const appResourcesFullPath = resolve(projectRoot, appResourcesPath);
+  const copyIgnore = { ignore: [`${relative(appPath, appResourcesFullPath)}/**`] };
 
-## Code scaffolding
+6. In tsconfig.tns.json, add a new section to disable Ivy
+  "angularCompilerOptions": {
+    "enableIvy": false
+  }
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+7. Run ng serve for web and tns run android --env.aot for mobile
